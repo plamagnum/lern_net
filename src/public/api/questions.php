@@ -9,7 +9,7 @@
  * або параметр ?api_key=super_secret_admin_key_2024
  *
  * Приклад curl-запиту:
- * curl -X POST http://localhost/api/questions.php \
+ * curl -X POST http://localhost:8086/api/questions.php \
  *   -H "Authorization: ******" \
  *   -H "Content-Type: application/json" \
  *   -d '{

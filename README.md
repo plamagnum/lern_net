@@ -67,7 +67,7 @@ docker compose ps
 
 | Сервіс          | URL                        |
 |-----------------|----------------------------|
-| Веб-додаток     | http://localhost            |
+| Веб-додаток     | http://localhost:8086       |
 | phpMyAdmin      | http://localhost:8080       |
 
 ---
@@ -118,13 +118,13 @@ docker compose ps
 
 ```bash
 curl -H "Authorization: ******" \
-     "http://localhost/api/questions.php?limit=5"
+     "http://localhost:8086/api/questions.php?limit=5"
 ```
 
 #### `POST /api/questions.php` — Додати нове запитання
 
 ```bash
-curl -X POST http://localhost/api/questions.php \
+curl -X POST http://localhost:8086/api/questions.php \
   -H "Authorization: ******" \
   -H "Content-Type: application/json" \
   -d '{
