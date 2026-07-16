@@ -190,15 +190,16 @@ function getAllWikiPages(): array {
     )->fetchAll();
 }
 
+// Масиви для транслітерації (оголошені один раз на рівні модуля)
+define('TRANSLIT_CYR', ['а','б','в','г','д','е','є','ж','з','и','і','ї','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ь','ю','я']);
+define('TRANSLIT_LAT', ['a','b','v','g','d','e','ye','zh','z','y','i','yi','y','k','l','m','n','o','p','r','s','t','u','f','kh','ts','ch','sh','shch','','yu','ya']);
+
 /**
  * Генерує slug зі заголовку сторінки
  */
 function generateSlug(string $title): string {
     $slug = mb_strtolower($title, 'UTF-8');
-    // Транслітерація кириличних символів
-    $cyr  = ['а','б','в','г','д','е','є','ж','з','и','і','ї','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ь','ю','я'];
-    $lat  = ['a','b','v','g','d','e','ye','zh','z','y','i','yi','y','k','l','m','n','o','p','r','s','t','u','f','kh','ts','ch','sh','shch','','yu','ya'];
-    $slug = str_replace($cyr, $lat, $slug);
+    $slug = str_replace(TRANSLIT_CYR, TRANSLIT_LAT, $slug);
     $slug = preg_replace('/[^a-z0-9\-]/', '-', $slug);
     $slug = preg_replace('/-+/', '-', $slug);
     return trim($slug, '-');

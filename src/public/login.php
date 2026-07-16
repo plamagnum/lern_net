@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Будь ласка, заповніть усі поля.';
     } else {
         $result = loginUser($usernameOrEmail, $password);
-$error = '';
 
         if ($result['success']) {
             // Перенаправляємо після успішного входу (лише на відносні шляхи)

@@ -33,7 +33,9 @@ function getDb(): PDO {
             error_log('Помилка підключення до БД: ' . $e->getMessage());
             http_response_code(503);
             // Перевіряємо чи це API-запит (повертаємо JSON) або звичайна сторінка
-            $isApi = (strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') !== false);
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+            $isApi = (strpos($requestUri, '/api/') === 0 ||
+                      preg_match('#^/api/#', parse_url($requestUri, PHP_URL_PATH) ?? ''));
             if ($isApi) {
                 header('Content-Type: application/json; charset=utf-8');
                 die(json_encode(['success' => false, 'error' => 'Сервіс тимчасово недоступний']));
