@@ -47,9 +47,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Зміна пароля користувача
+    // Зміна пароля користувача (вимагає підтвердження поточного пароля адміна)
     if ($postAction === 'change_password' && $targetId) {
-        $newPassword = $_POST['new_password'] ?? '';
+        $newPassword    = $_POST['new_password']     ?? '';
+        $adminPassword  = $_POST['admin_password']   ?? '';
+
+        // Перевіряємо поточний пароль адміна
+        $stmt = $db->prepare('SELECT password FROM users WHERE id = ?');
+        $stmt->execute([$currentUser['id']]);
+        $adminRow = $stmt->fetch();
+        if (!$adminRow || !password_verify($adminPassword, $adminRow['password'])) {
+            $_SESSION['flash'][] = ['type' => 'error', 'msg' => 'Невірний пароль адміна.'];
+            header('Location: /admin/users.php');
+            exit;
+        }
+
         if (strlen($newPassword) < 6) {
             $_SESSION['flash'][] = ['type' => 'error', 'msg' => 'Пароль повинен бути не менше 6 символів.'];
         } else {
@@ -165,6 +177,11 @@ require __DIR__ . '/../templates/header.php';
                 <label class="form-label">Новий пароль для: <strong id="pwd-username"></strong></label>
                 <input type="password" name="new_password" class="form-control"
                        placeholder="Мінімум 6 символів" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ваш поточний пароль (підтвердження)</label>
+                <input type="password" name="admin_password" class="form-control"
+                       placeholder="Ваш пароль адміна" required>
             </div>
             <div class="d-flex gap-1">
                 <button type="submit" class="btn btn-primary">Зберегти</button>

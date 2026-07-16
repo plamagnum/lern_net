@@ -14,8 +14,12 @@ if (isLoggedIn()) {
     exit;
 }
 
-$error    = '';
-$redirect = filter_input(INPUT_GET, 'redirect', FILTER_SANITIZE_URL) ?: '/';
+$redirect = '/';
+$rawRedirect = filter_input(INPUT_GET, 'redirect', FILTER_UNSAFE_RAW) ?? '';
+// Дозволяємо лише відносні шляхи (без зовнішніх URL) для запобігання відкритим перенаправленням
+if ($rawRedirect && preg_match('#^/[^/\\\\]#', $rawRedirect)) {
+    $redirect = $rawRedirect;
+}
 
 // Обробка форми входу
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,10 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Будь ласка, заповніть усі поля.';
     } else {
         $result = loginUser($usernameOrEmail, $password);
+$error = '';
+
         if ($result['success']) {
-            // Перенаправляємо після успішного входу
-            $safe = filter_var($redirect, FILTER_VALIDATE_URL) ? $redirect : '/';
-            header('Location: ' . $safe);
+            // Перенаправляємо після успішного входу (лише на відносні шляхи)
+            header('Location: ' . $redirect);
             exit;
         } else {
             $error = $result['error'];

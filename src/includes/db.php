@@ -32,7 +32,14 @@ function getDb(): PDO {
             // Логуємо помилку, але не показуємо деталі користувачу
             error_log('Помилка підключення до БД: ' . $e->getMessage());
             http_response_code(503);
-            die(json_encode(['error' => 'Сервіс тимчасово недоступний']));
+            // Перевіряємо чи це API-запит (повертаємо JSON) або звичайна сторінка
+            $isApi = (strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') !== false);
+            if ($isApi) {
+                header('Content-Type: application/json; charset=utf-8');
+                die(json_encode(['success' => false, 'error' => 'Сервіс тимчасово недоступний']));
+            } else {
+                die('<html><body><h1>503 — Сервіс тимчасово недоступний</h1><p>Будь ласка, спробуйте пізніше.</p></body></html>');
+            }
         }
     }
 

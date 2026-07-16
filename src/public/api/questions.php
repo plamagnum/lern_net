@@ -6,7 +6,7 @@
  * GET  /api/questions.php — список запитань (для перевірки)
  *
  * Авторизація: заголовок Authorization: ******
- * або параметр ?api_key=<API_KEY>
+ * або параметр ?api_key=super_secret_admin_key_2024
  *
  * Приклад curl-запиту:
  * curl -X POST http://localhost/api/questions.php \
