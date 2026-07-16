@@ -1,0 +1,87 @@
+# Docker Compose конфігурація для LinuxTest - веб-додатку для тестування знань Linux
+version: '3.8'
+
+services:
+  # Веб-сервер nginx
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: lernnet_nginx
+    ports:
+      - "8086:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./src/public:/var/www/html:ro
+    depends_on:
+      - php
+    restart: unless-stopped
+    networks:
+      - lernnet
+
+  # PHP-FPM сервер
+  php:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: lernnet_php
+    volumes:
+      - ./src:/var/www
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - lernnet
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=lernnet
+      - DB_USER=lernnet
+      - DB_PASS=lernnet_pass
+      - ADMIN_API_KEY=super_secret_admin_key_2024
+
+  # База даних MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: lernnet_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: lernnet
+      MYSQL_USER: lernnet
+      MYSQL_PASSWORD: lernnet_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "lernnet", "-plernnet_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - lernnet
+
+  # phpMyAdmin для адміністрування БД
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: lernnet_phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    networks:
+      - lernnet
+
+# Мережа для взаємодії контейнерів
+networks:
+  lernnet:
+    driver: bridge
+
+# Том для збереження даних MySQL
+volumes:
+  mysql_data:
