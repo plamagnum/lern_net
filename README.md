@@ -107,8 +107,8 @@ docker compose ps
 
 Всі API-запити потребують ключа адміна. Передавайте його одним із способів:
 
-- **HTTP-заголовок**: `Authorization: ******
-- **GET-параметр**: `?api_key=super_secret_admin_key_2024`
+- **HTTP-заголовок**: `Authorization: YOUR_ADMIN_API_KEY`
+- **GET-параметр**: `?api_key=YOUR_ADMIN_API_KEY`
 
 > 💡 Ключ можна змінити у `docker-compose.yml` (параметр `ADMIN_API_KEY`).
 
@@ -117,7 +117,7 @@ docker compose ps
 #### `GET /api/questions.php` — Список запитань
 
 ```bash
-curl -H "Authorization: ******" \
+curl -H "Authorization: YOUR_ADMIN_API_KEY" \
      "http://localhost:8086/api/questions.php?limit=5"
 ```
 
@@ -125,7 +125,7 @@ curl -H "Authorization: ******" \
 
 ```bash
 curl -X POST http://localhost:8086/api/questions.php \
-  -H "Authorization: ******" \
+  -H "Authorization: YOUR_ADMIN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "question":    "Яка команда показує вміст директорії?",

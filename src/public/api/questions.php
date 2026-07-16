@@ -5,12 +5,12 @@
  * POST /api/questions.php — додати нове запитання з відповідями
  * GET  /api/questions.php — список запитань (для перевірки)
  *
- * Авторизація: заголовок Authorization: ******
- * або параметр ?api_key=super_secret_admin_key_2024
+ * Авторизація: заголовок Authorization: YOUR_ADMIN_API_KEY
+ * або параметр ?api_key=YOUR_ADMIN_API_KEY
  *
  * Приклад curl-запиту:
  * curl -X POST http://localhost:8086/api/questions.php \
- *   -H "Authorization: ******" \
+ *   -H "Authorization: YOUR_ADMIN_API_KEY" \
  *   -H "Content-Type: application/json" \
  *   -d '{
  *     "question":    "Яка команда виводить список файлів?",
